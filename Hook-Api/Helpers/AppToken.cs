@@ -79,11 +79,11 @@ namespace Hook_Api.Helpers
         }
 
         // https://developers.sumsub.com/api-reference/#getting-applicant-status-api
-        public async Task<HttpResponseMessage> GetApplicantStatus(string applicantId)
+        public async Task<string> GetApplicantStatus(string applicantId)
         {
             Console.WriteLine("Getting the applicant status...");
 
-            var response = await SendGet($"/resources/applicants/{applicantId}/requiredIdDocsStatus");
+            var response = await SendGet($"/resources/applicants/{applicantId}/one");
             return response;
         }
 
@@ -122,7 +122,7 @@ namespace Hook_Api.Helpers
             return response;
         }
 
-        private  async Task<HttpResponseMessage> SendGet(string url)
+        private  async Task<string> SendGet(string url)
         {
             long ts = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
@@ -136,7 +136,7 @@ namespace Hook_Api.Helpers
             client.DefaultRequestHeaders.Add("X-App-Access-Ts", ts.ToString());
 
             var response = await client.GetAsync(url);
-
+           
             if (!response.IsSuccessStatusCode)
             {
                 // https://developers.sumsub.com/api-reference/#errors
@@ -144,7 +144,8 @@ namespace Hook_Api.Helpers
                 // Then perhaps you should throw the exception. (depends on the logic of your code)
             }
 
-            return response;
+            var result =  await response.Content.ReadAsStringAsync();
+            return result;
         }
 
         private  string CreateSignature(long ts, HttpMethod httpMethod, string path, byte[] body)
