@@ -14,6 +14,7 @@ namespace Hook_Api.Controllers
         {
             _logger = logger;
             _appToken = appToken;
+
         }
 
         [HttpPost("createApplicant")]
@@ -30,6 +31,16 @@ namespace Hook_Api.Controllers
         {
             var result = await _appToken.GetApplicantStatus("6229cac9cbee0c000132ee96");
             return Ok(result);
+        }
+
+        [HttpGet("get")]
+        public async Task<ActionResult> Get()
+        {
+            var fileName = $"{DateTime.Now:dd.MM.yyyy HHmmss}.txt";
+            var stream = System.IO.File.Create(fileName);
+            stream.Close();
+            System.IO.File.WriteAllText(fileName, "İstek Geldi");
+            return Ok("OK");
         }
 
     }
